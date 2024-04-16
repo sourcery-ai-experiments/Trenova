@@ -289,6 +289,38 @@ var (
 			},
 		},
 	}
+	// CustomReportsColumns holds the columns for the "custom_reports" table.
+	CustomReportsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "version", Type: field.TypeInt, Default: 1},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "table", Type: field.TypeString, Nullable: true},
+		{Name: "business_unit_id", Type: field.TypeUUID},
+		{Name: "organization_id", Type: field.TypeUUID},
+	}
+	// CustomReportsTable holds the schema information for the "custom_reports" table.
+	CustomReportsTable = &schema.Table{
+		Name:       "custom_reports",
+		Columns:    CustomReportsColumns,
+		PrimaryKey: []*schema.Column{CustomReportsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "custom_reports_business_units_business_unit",
+				Columns:    []*schema.Column{CustomReportsColumns[7]},
+				RefColumns: []*schema.Column{BusinessUnitsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "custom_reports_organizations_organization",
+				Columns:    []*schema.Column{CustomReportsColumns[8]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// CustomersColumns holds the columns for the "customers" table.
 	CustomersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -2262,6 +2294,83 @@ var (
 			},
 		},
 	}
+	// UserNotificationsColumns holds the columns for the "user_notifications" table.
+	UserNotificationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "version", Type: field.TypeInt, Default: 1},
+		{Name: "is_read", Type: field.TypeBool, Default: false},
+		{Name: "title", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Size: 2147483647},
+		{Name: "action_url", Type: field.TypeString, Nullable: true},
+		{Name: "user_id", Type: field.TypeUUID},
+		{Name: "business_unit_id", Type: field.TypeUUID},
+		{Name: "organization_id", Type: field.TypeUUID},
+	}
+	// UserNotificationsTable holds the schema information for the "user_notifications" table.
+	UserNotificationsTable = &schema.Table{
+		Name:       "user_notifications",
+		Columns:    UserNotificationsColumns,
+		PrimaryKey: []*schema.Column{UserNotificationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_notifications_users_user_notifications",
+				Columns:    []*schema.Column{UserNotificationsColumns[8]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "user_notifications_business_units_business_unit",
+				Columns:    []*schema.Column{UserNotificationsColumns[9]},
+				RefColumns: []*schema.Column{BusinessUnitsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "user_notifications_organizations_organization",
+				Columns:    []*schema.Column{UserNotificationsColumns[10]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// UserReportsColumns holds the columns for the "user_reports" table.
+	UserReportsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "version", Type: field.TypeInt, Default: 1},
+		{Name: "report_url", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeUUID},
+		{Name: "business_unit_id", Type: field.TypeUUID},
+		{Name: "organization_id", Type: field.TypeUUID},
+	}
+	// UserReportsTable holds the schema information for the "user_reports" table.
+	UserReportsTable = &schema.Table{
+		Name:       "user_reports",
+		Columns:    UserReportsColumns,
+		PrimaryKey: []*schema.Column{UserReportsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_reports_users_reports",
+				Columns:    []*schema.Column{UserReportsColumns[5]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "user_reports_business_units_business_unit",
+				Columns:    []*schema.Column{UserReportsColumns[6]},
+				RefColumns: []*schema.Column{BusinessUnitsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "user_reports_organizations_organization",
+				Columns:    []*schema.Column{UserReportsColumns[7]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// WorkersColumns holds the columns for the "workers" table.
 	WorkersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -2510,6 +2619,7 @@ var (
 		ChargeTypesTable,
 		CommentTypesTable,
 		CommoditiesTable,
+		CustomReportsTable,
 		CustomersTable,
 		DelayCodesTable,
 		DispatchControlsTable,
@@ -2556,6 +2666,8 @@ var (
 		UsStatesTable,
 		UsersTable,
 		UserFavoritesTable,
+		UserNotificationsTable,
+		UserReportsTable,
 		WorkersTable,
 		WorkerCommentsTable,
 		WorkerContactsTable,
@@ -2581,6 +2693,8 @@ func init() {
 	CommoditiesTable.ForeignKeys[0].RefTable = BusinessUnitsTable
 	CommoditiesTable.ForeignKeys[1].RefTable = OrganizationsTable
 	CommoditiesTable.ForeignKeys[2].RefTable = HazardousMaterialsTable
+	CustomReportsTable.ForeignKeys[0].RefTable = BusinessUnitsTable
+	CustomReportsTable.ForeignKeys[1].RefTable = OrganizationsTable
 	CustomersTable.ForeignKeys[0].RefTable = BusinessUnitsTable
 	CustomersTable.ForeignKeys[1].RefTable = OrganizationsTable
 	CustomersTable.ForeignKeys[2].RefTable = UsStatesTable
@@ -2721,6 +2835,12 @@ func init() {
 	UserFavoritesTable.ForeignKeys[0].RefTable = UsersTable
 	UserFavoritesTable.ForeignKeys[1].RefTable = BusinessUnitsTable
 	UserFavoritesTable.ForeignKeys[2].RefTable = OrganizationsTable
+	UserNotificationsTable.ForeignKeys[0].RefTable = UsersTable
+	UserNotificationsTable.ForeignKeys[1].RefTable = BusinessUnitsTable
+	UserNotificationsTable.ForeignKeys[2].RefTable = OrganizationsTable
+	UserReportsTable.ForeignKeys[0].RefTable = UsersTable
+	UserReportsTable.ForeignKeys[1].RefTable = BusinessUnitsTable
+	UserReportsTable.ForeignKeys[2].RefTable = OrganizationsTable
 	WorkersTable.ForeignKeys[0].RefTable = BusinessUnitsTable
 	WorkersTable.ForeignKeys[1].RefTable = OrganizationsTable
 	WorkersTable.ForeignKeys[2].RefTable = UsStatesTable
